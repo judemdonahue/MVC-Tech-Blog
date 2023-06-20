@@ -1,0 +1,27 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    list-style: none;
+    text-decoration: none;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+.post-container{
+    width: 100%;
+    justify-content: center;
+    
+}
+.post-inner{
+    width: 80%;
+}
+
+.blog-post{
+    border-radius: 5px; 
+}
+.post-info{
+    margin-left: auto;
+}
+.post-body{
+    border-radius: 5px;
+}
