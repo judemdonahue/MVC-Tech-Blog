@@ -5,9 +5,7 @@ class Comment extends Model {}
 
 Comment.init(
     {
-        body: {
-
-        }
+        body: { type: DataTypes.STRING, allowNull: false }
     },
     {
         sequelize
