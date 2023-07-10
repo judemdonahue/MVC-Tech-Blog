@@ -8,20 +8,20 @@
   }
   
 .post-container{
-    width: 100%;
-    justify-content: center;
+    width: 100% !important;
+    justify-content: center !important;
     
 }
 .post-inner{
-    width: 80%;
+    width: 80% !important;
 }
 
 .blog-post{
-    border-radius: 5px; 
+    border-radius: 5px !important; 
 }
 .post-info{
-    margin-left: auto;
+    margin-left: auto !important; 
 }
 .post-body{
-    border-radius: 5px;
+    border-radius: 5px !important;
 }
