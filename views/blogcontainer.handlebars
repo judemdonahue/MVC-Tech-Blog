@@ -1,0 +1,20 @@
+<div class="post-container d-flex justify-content-center my-4">
+    <div class="post-inner justify-content-center">
+
+
+        {{#each posts as |post|}}
+        <div class="blog-post bg-secondary p-3">
+            <div class="title-container container-fluid d-flex">
+                <h4 class="title text-light">{{post.title}}</h4>
+                <h6 class="post-info text-light">Posted by {{post.user}} - 05-20-2023</h6>
+            </div>
+
+            <div class="post-body p-3 bg-light">
+                    {{post.content}}
+            </div>
+        </div>
+        {{/each}}
+                
+
+    </div>
+</div>

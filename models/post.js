@@ -8,7 +8,7 @@ Post.init(
         id: { type: DataTypes.INTEGER, allowNull: false, primaryKey: true, autoIncrement: true },
         title: { type: DataTypes.STRING, allowNull: false },
         user: { type: DataTypes.STRING, allowNull: false },
-        body: { type: DataTypes.STRING, allowNull: false }
+        content: { type: DataTypes.STRING, allowNull: false }
     },
     {
         sequelize

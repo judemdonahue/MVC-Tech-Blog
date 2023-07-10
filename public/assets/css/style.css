@@ -18,6 +18,7 @@
 
 .blog-post{
     border-radius: 5px !important; 
+    margin: 1rem !important;
 }
 .post-info{
     margin-left: auto !important; 
