@@ -1,5 +1,7 @@
 const router = require('express').Router();
 
+
+
 const posts = [
     {
         id: 1,
@@ -23,14 +25,34 @@ const posts = [
 
 // GET route for rendering the Main page template
 router.get('/', async (req, res) => {
-
+    if (req.session.loggedIn) {
+        res.redirect('/');
+    } else {
+        res.render('login');
+    }
     //Rendering individual post template
-    res.render('blogcontainer', { posts });
+    
 
 });
 
 router.get('/post/:num', async (req, res) => {
     return res.render('post', posts[req.params.num - 1]);
+});
+
+router.get('/login', async (req, res) => {
+    if (req.session.loggedIn) {
+        res.redirect('/blogcontainer');
+        return;
+    }
+    res.render('login');
+});
+
+router.get('/signup', async (req, res) => {
+    if (req.session.loggedIn) {
+        res.redirect('/blogcontainer');
+        return;
+    }
+    res.render('signup');
 });
 
 module.exports = router;

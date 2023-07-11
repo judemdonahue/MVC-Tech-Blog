@@ -6,7 +6,8 @@
     text-decoration: none;
     font-family: 'Poppins', sans-serif;
   }
-  
+
+  /* Home Feed Start */
 .post-container{
     width: 100% !important;
     justify-content: center !important;
@@ -26,3 +27,18 @@
 .post-body{
     border-radius: 5px !important;
 }
+/* Home Feed End */
+
+/* Signup/Login Menu Start */
+.menu-container{
+    width: 100% !important;
+    justify-content: center !important;
+}
+.menu-form{
+    border-radius: 5px !important; 
+    margin: 1rem !important;
+}
+.menu-body{
+    border-radius: 5px !important;
+}
+/* Signup/Login Menu End */
