@@ -1,61 +1,53 @@
-// required dependencies
-const router = require("express").Router();
-const { User } = require("../../models");
+const router = require('express').Router();
+const { User } = require('../../models');
 
-// make new user begin session
-router.post("/", async (req, res) => {
+router.post('/', async (req, res) => {
   try {
-    const userData = await User.create(req.body);
-    req.session.save(() => {
-      req.session.user_id = userData.id;
-      req.session.logged_in = true;
-      res.status(200).json(userData);
+    const newUser = await User.create({
+      username: req.body.user,
+      password: req.body.password,
     });
-    // catch error to tell what was wrong
+
+    req.session.userId = newUser.id;
+    req.session.username = newUser.user;
+    req.session.loggedIn = true;
+
+    res.json(newUser);
   } catch (err) {
-    res.status(400).json(err);
+    res.status(500).json(err);
   }
 });
 
-// log into ThoughtShare BlogPost
-router.post("/login", async (req, res) => {
+router.post('/login', async (req, res) => {
   try {
-    const userData = await User.findOne({
-      where: { username: req.body.username },
+    const user = await User.findOne({
+      where: {
+        username: req.body.user,
+      },
     });
-    // check for existing
-    if (!userData) {
-      res.status(400).json({ message: "Error...Account NOT found" });
+
+    if (!user || !user.checkPassword(req.body.password)) {
+      res.status(400).json({ message: 'Invalid username or password!' });
       return;
     }
-    // check for matching password
-    const goodPassword = await userData.checkPassword(req.body.password);
-    if (!goodPassword) {
-      res.status(400).json({ message: "Error...Account NOT found" });
-      return;
-    }
-    // if good log in and begin session
-    req.session.save(() => {
-      req.session.user_id = userData.id;
-      req.session.logged_in = true;
-      res.json({ user: userData, message: "Hello...Successful log in" });
-    });
-    // catch error to tell what was wrong
+
+    req.session.userId = user.id;
+    req.session.username = user.user;
+    req.session.loggedIn = true;
+
+    res.json({ user, message: 'You are now logged in!' });
   } catch (err) {
-    res.status(400).json(err);
+    res.status(400).json({ message: 'Invalid username or password!' });
   }
 });
 
-// log out of ThoughtShare BlogPost
-router.post("/logout", (req, res) => {
-  // on log out destroy session data
-  if (req.session.logged_in) {
+router.post('/logout', (req, res) => {
+  if (req.session.loggedIn) {
     req.session.destroy(() => {
       res.status(204).end();
     });
-    // return an error if something wrong
   } else {
-    res.status(404).json({ message: "Goodbye...Successful log out" }).end();
+    res.status(404).end();
   }
 });
 
