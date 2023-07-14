@@ -1,51 +1,43 @@
-// Dependencies
-const express = require('express');
-const exphbs = require('express-handlebars');
 const path = require('path');
+const express = require('express');
+const session = require('express-session');
+const exphbs = require('express-handlebars');
+const routes = require('./controllers');
+const helpers = require('./utils/helpers');
 
-// Sets up the Express App
+const sequelize = require('./config/connection');
+
+// Create a new sequelize store using the express-session package
+const SequelizeStore = require('connect-session-sequelize')(session.Store);
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-const session = require('express-session');
+const hbs = exphbs.create({ helpers });
 
-// Middleware
-app.use(express.json()); // Parse JSON request bodies
-app.use(express.urlencoded({ extended: true })); // Parse URL-encoded request bodies
-
-app.use(session({
-  secret: 'secretsecret',
+// Configure and link a session object with the sequelize store
+const sess = {
+  secret: 'Super secret secret',
+  cookie: {},
   resave: false,
-  saveUninitialized: true
-}));
+  saveUninitialized: true,
+  store: new SequelizeStore({
+    db: sequelize
+  })
+};
 
-// Handlebars setup
-const hbs = exphbs.create({});
+// Add express-session and store as Express.js middleware
+app.use(session(sess));
+
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Routes
-const htmlRoutes = require('./controllers/htmlroutes');
-app.use(htmlRoutes);
+app.use(routes);
 
-app.post('/api/user/login', (req, res) => {
-  const { username, password } = req.body;
-
-  // Perform login logic here, such as checking credentials
-  if (username === 'admin' && password === 'password') {
-    // Successful login
-    req.session.userId = 1;
-    req.session.username = username;
-    req.session.loggedIn = true;
-    res.json({ message: 'You are now logged in!' });
-  } else {
-    // Invalid credentials
-    res.status(401).json({ message: 'Invalid username or password!' });
-  }
-});
-
-// Starts the server to begin listening
-app.listen(PORT, () => {
-  console.log('Server listening on: http://localhost:' + PORT);
+sequelize.sync({ force: false }).then(() => {
+  app.listen(PORT, () => console.log('Now listening'));
 });

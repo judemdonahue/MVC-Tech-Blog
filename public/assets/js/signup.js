@@ -1,39 +1,31 @@
-const signup = async (event) => {
-  event.preventDefault(); // Prevent the form from submitting
+const loginFormHandler = async (event) => {
+  // Stop the browser from submitting the form so we can do so with JavaScript
+  event.preventDefault();
 
-  const userInput = document.querySelector('#userInput').value;
-  const passwordInput = document.querySelector('#passwordInput').value;
+  // Gather the data from the form elements on the page
+  const user = document.querySelector('#userInput').value.trim();
+  const password = document.querySelector('#passwordInput').value.trim();
 
-  try {
-    const response = await fetch('/api/user', {
+  if (email && password) {
+    // Send the e-mail and password to the server
+    const response = await fetch('/api/users', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ username: userInput, password: passwordInput })
+      body: JSON.stringify({ email, password }),
+      headers: { 'Content-Type': 'application/json' },
     });
 
-    console.log(response); // Log the response to the console
-
     if (response.ok) {
-      // Redirect to the dashboard/home
-      window.location.href = '/';
+      document.location.replace('/');
     } else {
-      // Display an error message
-      const error = await response.json();
-      console.error(error.message);
+      alert('Failed to log in');
     }
-  } catch (error) {
-    console.error('An error occurred during signup', error);
   }
 };
-
-const signupBtn = document.querySelector('#signUpBtn');
-const altBtn = document.querySelector('#altBtn');
 
 altBtn.addEventListener('click', () => {
   window.location.href = '/login';
 });
 
-signupBtn.addEventListener('click', signup);
-
+document
+  .querySelector('.loginBtn')
+  .addEventListener('submit', loginFormHandler);

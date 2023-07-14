@@ -1,48 +1,44 @@
 const router = require('express').Router();
 const { User } = require('../../models');
 
-router.post('/', async (req, res) => {
-  try {
-    const newUser = await User.create({
-      username: req.body.user,
-      password: req.body.password,
-    });
-
-    req.session.userId = newUser.id;
-    req.session.username = newUser.user;
-    req.session.loggedIn = true;
-
-    res.json(newUser);
-  } catch (err) {
-    res.status(500).json(err);
-  }
-});
-
 router.post('/login', async (req, res) => {
   try {
-    const user = await User.findOne({
-      where: {
-        username: req.body.user,
-      },
-    });
+    // Find the user who matches the posted e-mail address
+    const userData = await User.findOne({ where: { email: req.body.email } });
 
-    if (!user || !user.checkPassword(req.body.password)) {
-      res.status(400).json({ message: 'Invalid username or password!' });
+    if (!userData) {
+      res
+        .status(400)
+        .json({ message: 'Incorrect email or password, please try again' });
       return;
     }
 
-    req.session.userId = user.id;
-    req.session.username = user.user;
-    req.session.loggedIn = true;
+    // Verify the posted password with the password store in the database
+    const validPassword = await userData.checkPassword(req.body.password);
 
-    res.json({ user, message: 'You are now logged in!' });
+    if (!validPassword) {
+      res
+        .status(400)
+        .json({ message: 'Incorrect email or password, please try again' });
+      return;
+    }
+
+    // Create session variables based on the logged in user
+    req.session.save(() => {
+      req.session.user_id = userData.id;
+      req.session.logged_in = true;
+      
+      res.json({ user: userData, message: 'You are now logged in!' });
+    });
+
   } catch (err) {
-    res.status(400).json({ message: 'Invalid username or password!' });
+    res.status(400).json(err);
   }
 });
 
 router.post('/logout', (req, res) => {
-  if (req.session.loggedIn) {
+  if (req.session.logged_in) {
+    // Remove the session variables
     req.session.destroy(() => {
       res.status(204).end();
     });
